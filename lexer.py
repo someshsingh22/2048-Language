@@ -1,9 +1,31 @@
-# calclex.py
-
 from sly import Lexer
+import re
+from utils import areBracketsBalanced
+from errors import InvalidCharacter, WrongCharacter, FalseTermination, EndNotFound
 
 
 class Lexer2048(Lexer):
+    def err_tokenize(self, text, lineno=1, index=0):
+        ltext = areBracketsBalanced(text)
+        ltext = text.rstrip()
+        _ = self.tokenize(text, lineno=1, index=0)
+        Q, D, length = ltext.find("?"), ltext.find("."), len(ltext)
+        if Q >= 0:
+            if D >= 0:
+                if Q < D or (D == length - 1):
+                    raise WrongCharacter("?", Q)
+                else:
+                    raise FalseTermination(D)
+            else:
+                raise WrongCharacter("?", Q)
+        else:
+            if D == -1:
+                raise EndNotFound
+            elif D != length - 1:
+                raise FalseTermination(D)
+            else:
+                pass
+        return self.tokenize(ltext[:-1], lineno=1, index=0)
 
     # Set of token names. This is always required
     tokens = {
@@ -20,7 +42,6 @@ class Lexer2048(Lexer):
         IN,
         LPAREN,
         RPAREN,
-        END,
     }
 
     ignore = " \t"
@@ -46,8 +67,6 @@ class Lexer2048(Lexer):
     INDENTIFIER["IN"] = IN
     LPAREN = r"\("
     RPAREN = r"\)"
-    END = r"\."
 
     def error(self, t):
-        print("Line %d: Bad character %r" % (self.lineno, t.value[0]))
-        self.index += 1
+        raise InvalidCharacter(self.index, t.value[0])
