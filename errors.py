@@ -1,4 +1,24 @@
-class InvalidCharacter(Exception):
+class SyntaxException(Exception):
+    """
+    Parent Exception for Syntax Errors
+    """
+
+    def __init__(self, error):
+        self.message = "Syntax Error! : "
+        super().__init__(self.message + error)
+
+
+class RuntimeException(Exception):
+    """
+    Parent Exception for Runtime Errors
+    """
+
+    def __init__(self, error):
+        self.message = "Runtime Error! : "
+        super().__init__(self.message + error)
+
+
+class InvalidCharacter(SyntaxException):
     """
     Raised when a foreign character is passed to the lexer
     parameter:
@@ -8,11 +28,12 @@ class InvalidCharacter(Exception):
     """
 
     def __init__(self, index, character):
+
         self.message = "Invalid Character %c found at index %d" % (character, index)
         super().__init__(self.message)
 
 
-class WrongCharacter(Exception):
+class WrongCharacter(SyntaxException):
     """
     Raised when a ? character is passed to the lexer in a wrong place
     parameter:
@@ -22,33 +43,36 @@ class WrongCharacter(Exception):
     """
 
     def __init__(self, index):
+
         self.message = "? referenced at index %d" % (index)
         super().__init__(self.message)
 
 
-class EndNotFound(Exception):
+class EndNotFound(SyntaxException):
     """
     Raised when a full stop is not present.
     parameter:
     """
 
     def __init__(self):
+
         self.message = "Full Stop required to terminate the command"
         super().__init__(self.message)
 
 
-class FalseTermination(Exception):
+class FalseTermination(SyntaxException):
     """
     Raised when a full stop is present in between
     parameter:
     """
 
     def __init__(self, index):
+
         self.message = "Non terminating Full Stop present at index %d" % index
         super().__init__(self.message)
 
 
-class InvalidIdentifier(Exception):
+class InvalidIdentifier(SyntaxException):
     """
     Raised when an invalid identifier is passed to the lexer
     parameter:
@@ -58,11 +82,12 @@ class InvalidIdentifier(Exception):
     """
 
     def __init__(self, index, identifier):
+
         self.message = "Invalid identifier %s found at index %d" % (identifier, index)
         super().__init__(self.message)
 
 
-class ReservedIdentifier(Exception):
+class ReservedIdentifier(SyntaxException):
     """
     Raised when an reserved identifier is passed to the lexer
     parameter:
@@ -72,11 +97,12 @@ class ReservedIdentifier(Exception):
     """
 
     def __init__(self, index, identifier):
+
         self.message = "Reserved identifier %s found at index %d" % (identifier, index)
         super().__init__(self.message)
 
 
-class InvalidAsssign(Exception):
+class InvalidAsssign(SyntaxException):
     """
     Raised when a Invalid assignment value is passed to the parser
     parameter:
@@ -86,11 +112,12 @@ class InvalidAsssign(Exception):
     """
 
     def __init__(self, index, value):
+
         self.message = "Invalid value %s found at index %d" % (value, index)
         super().__init__(self.message)
 
 
-class InvalidIndex(Exception):
+class InvalidIndex(SyntaxException):
     """
     Raised when a Invalid index is passed to the parser
     parameter:
@@ -100,11 +127,12 @@ class InvalidIndex(Exception):
     """
 
     def __init__(self, index, index_value):
+
         self.message = "Invalid index %s found at index %d" % (index_value, index)
         super().__init__(self.message)
 
 
-class WrongIndex(Exception):
+class WrongIndex(RuntimeException):
     """
     Raised when an out of bound index is passed on runtime
     parameter:
@@ -115,6 +143,7 @@ class WrongIndex(Exception):
     """
 
     def __init__(self, index, index_value, irange):
+
         self.message = "Invalid index %s found at index %d, index can vary from %s" % (
             index_value,
             index,
@@ -123,7 +152,7 @@ class WrongIndex(Exception):
         super().__init__(self.message)
 
 
-class ImbalancedParanthesis(Exception):
+class ImbalancedParanthesis(SyntaxException):
     """
     Raised when a imbalanced paranthesis is passed to the parser
     parameter:
@@ -133,5 +162,9 @@ class ImbalancedParanthesis(Exception):
     """
 
     def __init__(self, index, imbalance):
-        self.message = "imbalanced paranthesis %s found starting at index %d" % (imbalance, index)
+
+        self.message = "imbalanced paranthesis %s found starting at index %d" % (
+            imbalance,
+            index,
+        )
         super().__init__(self.message)
