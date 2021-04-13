@@ -8,8 +8,9 @@ lexer = Lexer2048()
 while True:
     command = input("2048> ")
 
-    if command == 0:
-        break
-
-    for token in lexer.tokenize(command):
-        print(token)
+    try:
+        tokens = lexer.err_tokenize(command)
+        for token in tokens:
+            print(token)
+    except Exception as E:
+        print(str(E))

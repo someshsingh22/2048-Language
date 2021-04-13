@@ -35,16 +35,16 @@ class InvalidCharacter(SyntaxException):
 
 class WrongCharacter(SyntaxException):
     """
-    Raised when a ? character is passed to the lexer in a wrong place
+    Raised when a , or ? character is passed to the lexer in a wrong place
     parameter:
 
     index: index at which invalid character was found
     character: the invalid character that was found
     """
 
-    def __init__(self, index):
+    def __init__(self, character, index):
 
-        self.message = "? referenced at index %d" % (index)
+        self.message = "%c wrongly referenced at index %d" % (character, index)
         super().__init__(self.message)
 
 
@@ -161,10 +161,7 @@ class ImbalancedParanthesis(SyntaxException):
     value: the imbalanced paranthesis that was found
     """
 
-    def __init__(self, index, imbalance):
+    def __init__(self):
 
-        self.message = "imbalanced paranthesis %s found starting at index %d" % (
-            imbalance,
-            index,
-        )
+        self.message = "imbalanced paranthesis found"
         super().__init__(self.message)
