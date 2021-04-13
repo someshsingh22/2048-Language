@@ -9,6 +9,9 @@ while True:
     try:
         command = input("2048>")
         command = lexer.err(command)
+        tokens = lexer.tokenize(command)
+        for token in tokens:
+            print(token)
         out = parser.parse(lexer.tokenize(command))
         print(out)
     except Exception as E:
