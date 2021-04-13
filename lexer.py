@@ -5,7 +5,7 @@ from errors import InvalidCharacter, WrongCharacter, FalseTermination, EndNotFou
 
 
 class Lexer2048(Lexer):
-    def err_tokenize(self, text, lineno=1, index=0):
+    def err(self, text, lineno=1, index=0):
         ltext = text.rstrip()
         Q, D, length = ltext.find("?"), ltext.find("."), len(ltext)
         if Q >= 0:
@@ -22,8 +22,9 @@ class Lexer2048(Lexer):
             elif D != length - 1:
                 raise FalseTermination(D)
             else:
-                return self.tokenize(ltext[:-1], lineno=1, index=0)
+                return ltext[:-1]
 
+    # Set of token names. This is always required
     tokens = {
         IDENTIFIER,
         NUMBER,

@@ -3,30 +3,35 @@ from lexer import Lexer2048
 
 
 class Parser2048(Parser):
-    def __init__(self):
-        self.command = []
-
     tokens = Lexer2048.tokens
 
+    def __init__(self, fmap=None):
+        self.fmap = fmap
+
+    @_("expr")
+    def statement(self, p):
+        return p.expr
+
+    @_("NUMBER")
+    def expr(self, p):
+        return int(p.NUMBER)
+
+    @_("VAR IDENTIFIER IS expr COMMA expr")
+    def statement(self, p):
+        return (p.IDENTIFIER, p.expr0, p.expr1)
+
+    @_("ASSIGN expr TO expr COMMA expr")
+    def statement(self, p):
+        return (p.expr0, p.expr1, p.expr2)
+
+    @_("VALUE IN expr COMMA expr")
+    def expr(self, p):
+        return (p.expr0, p.expr1)
+
     @_("OPERATION DIRECTION")
-    def command(self, p):
-        self.command = ("move", {"direction": p.DIRECTION, "operation": p.OPERATION})
+    def statement(self, p):
+        return (p.OPERATION, p.DIRECTION)
 
-    @_("ASSIGN NUMBER TO INDEX")
-    def command(self, p):
-        self.command = ("assign", {"index": p.INDEX, "value": p.NUMBER})
-
-    @_("ASSIGN LPAREN VALUE IN INDEX RPAREN TO INDEX")
-    def command(self, p):
-        self.command = (
-            "assign_query",
-            {"index": p.INDEX0, "value": ("query", {"index": p.INDEX1})},
-        )
-
-    @_("VALUE IN INDEX")
-    def command(self, p):
-        self.command = ("query", {"index": p.INDEX})
-
-    @_("VAR INDENTIFIER IS INDEX")
-    def command(self, p):
-        self.command = ("name", {"varName": p.VAR, "index": p.INDEX})
+    @_("IDENTIFIER")
+    def expr(self, p):
+        return p.IDENTIFIER
