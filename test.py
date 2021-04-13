@@ -7,12 +7,7 @@ lexer, parser = Lexer2048(), Parser2048()
 out = 0
 while True:
     try:
-        command = input("2048>")
-        command = lexer.err(command)
-        tokens = lexer.tokenize(command)
-        for token in tokens:
-            print(token)
+        command = lexer.err(input("2048>"))
         out = parser.parse(lexer.tokenize(command))
-        print(out)
     except Exception as E:
         print(str(E))
