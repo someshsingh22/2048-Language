@@ -20,15 +20,16 @@ class Lexer2048(Lexer):
         IN,
         LPAREN,
         RPAREN,
+        END,
     }
 
     ignore = " \t"
     literals = {".", "?", ","}
 
     # Identifiers and keywords
-    INDEX = r"[0-9]+,[0-9]+"
+    INDEX = r"[0-9]+[ ]*,[ ]*[0-9]+"
     NUMBER = r"[0-9]+"
-    INDENTIFIER = r"[A-Z_][A-Z0-9_]*"
+    INDENTIFIER = r"[a-zA-Z]+[a-zA-Z0-9]*"
     INDENTIFIER["ADD"] = OPERATION
     INDENTIFIER["SUBTRACT"] = OPERATION
     INDENTIFIER["MULTIPLY"] = OPERATION
@@ -45,6 +46,7 @@ class Lexer2048(Lexer):
     INDENTIFIER["IN"] = IN
     LPAREN = r"\("
     RPAREN = r"\)"
+    END = r"\."
 
     def error(self, t):
         print("Line %d: Bad character %r" % (self.lineno, t.value[0]))

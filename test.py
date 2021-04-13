@@ -10,7 +10,7 @@ g.matrix[3][2] = Tile(index=(2, 1), value=1024)
 print(g)
 
 commands = [
-    """ADD LEFT""",
+    """ADD LEFT.""",
     """ASSIGN   (VALUE IN  3,8) TO 7,7""",
     """VAR ABC IS 5,8""",
     """VALUE IN 4,9""",
@@ -18,5 +18,7 @@ commands = [
 
 lexer, parser = Lexer2048(), Parser2048()
 for command in commands:
-    parser.parse(lexer.tokenize(command))
+    toks = lexer.tokenize(command)
+    print([tok for tok in toks])
+    parser.parse(toks)
     print(parser.command)
