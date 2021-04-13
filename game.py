@@ -97,7 +97,7 @@ class Board:
         """
         raise NotImplementedError
 
-    def name(self, varName, value):
+    def name(self, varName, index):
         """
         Assigns some value to given varnames in memory
         """
