@@ -6,9 +6,7 @@ from errors import InvalidCharacter, WrongCharacter, FalseTermination, EndNotFou
 
 class Lexer2048(Lexer):
     def err_tokenize(self, text, lineno=1, index=0):
-        ltext = areBracketsBalanced(text)
         ltext = text.rstrip()
-        _ = self.tokenize(text, lineno=1, index=0)
         Q, D, length = ltext.find("?"), ltext.find("."), len(ltext)
         if Q >= 0:
             if D >= 0:
@@ -24,14 +22,12 @@ class Lexer2048(Lexer):
             elif D != length - 1:
                 raise FalseTermination(D)
             else:
-                pass
-        return self.tokenize(ltext[:-1], lineno=1, index=0)
+                return self.tokenize(ltext[:-1], lineno=1, index=0)
 
-    # Set of token names. This is always required
     tokens = {
-        INDENTIFIER,
+        IDENTIFIER,
         NUMBER,
-        INDEX,
+        COMMA,
         OPERATION,
         DIRECTION,
         ASSIGN,
@@ -40,33 +36,29 @@ class Lexer2048(Lexer):
         IS,
         VALUE,
         IN,
-        LPAREN,
-        RPAREN,
     }
 
     ignore = " \t"
     literals = {".", "?", ","}
 
     # Identifiers and keywords
-    INDEX = r"[0-9]+[ ]*,[ ]*[0-9]+"
-    NUMBER = r"[0-9]+"
-    INDENTIFIER = r"[a-zA-Z]+[a-zA-Z0-9]*"
-    INDENTIFIER["ADD"] = OPERATION
-    INDENTIFIER["SUBTRACT"] = OPERATION
-    INDENTIFIER["MULTIPLY"] = OPERATION
-    INDENTIFIER["DIVIDE"] = OPERATION
-    INDENTIFIER["LEFT"] = DIRECTION
-    INDENTIFIER["RIGHT"] = DIRECTION
-    INDENTIFIER["UP"] = DIRECTION
-    INDENTIFIER["DOWN"] = DIRECTION
-    INDENTIFIER["ASSIGN"] = ASSIGN
-    INDENTIFIER["TO"] = TO
-    INDENTIFIER["VAR"] = VAR
-    INDENTIFIER["IS"] = IS
-    INDENTIFIER["VALUE"] = VALUE
-    INDENTIFIER["IN"] = IN
-    LPAREN = r"\("
-    RPAREN = r"\)"
+    COMMA = r"\,"
+    NUMBER = r"\d+"
+    IDENTIFIER = r"[a-zA-Z]+[a-zA-Z0-9]*"
+    IDENTIFIER["ADD"] = OPERATION
+    IDENTIFIER["SUBTRACT"] = OPERATION
+    IDENTIFIER["MULTIPLY"] = OPERATION
+    IDENTIFIER["DIVIDE"] = OPERATION
+    IDENTIFIER["LEFT"] = DIRECTION
+    IDENTIFIER["RIGHT"] = DIRECTION
+    IDENTIFIER["UP"] = DIRECTION
+    IDENTIFIER["DOWN"] = DIRECTION
+    IDENTIFIER["ASSIGN"] = ASSIGN
+    IDENTIFIER["TO"] = TO
+    IDENTIFIER["VAR"] = VAR
+    IDENTIFIER["IS"] = IS
+    IDENTIFIER["VALUE"] = VALUE
+    IDENTIFIER["IN"] = IN
 
     def error(self, t):
         raise InvalidCharacter(self.index, t.value[0])
