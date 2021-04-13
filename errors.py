@@ -150,18 +150,3 @@ class WrongIndex(RuntimeException):
             irange,
         )
         super().__init__(self.message)
-
-
-class ImbalancedParanthesis(SyntaxException):
-    """
-    Raised when a imbalanced paranthesis is passed to the parser
-    parameter:
-
-    index: index at which imbalanced paranthesis was found
-    value: the imbalanced paranthesis that was found
-    """
-
-    def __init__(self):
-
-        self.message = "imbalanced paranthesis found"
-        super().__init__(self.message)
