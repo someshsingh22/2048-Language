@@ -1,4 +1,5 @@
 import random
+import sys
 
 
 class Tile:
@@ -81,11 +82,18 @@ class Board:
             [Tile(index=(r, c)) for c in range(self.columns)] for r in range(self.rows)
         ]
         self.target = target
+        self.fmap = {
+            "NAME": self.name,
+            "ASSIGN": self.assign,
+            "QUERY": self.query,
+            "MOVE": self.move,
+            "get_id": self.get_identifiers,
+        }
 
     def __repr__(self):
         return "\n".join([row.__repr__() for row in self.matrix]).replace(",", "|")
 
-    def assign(self, index, value):
+    def assign(self, value, index):
         """
         Assign Operation, Takes index and value and assigns value to that index
         """
@@ -101,6 +109,7 @@ class Board:
         """
         Assigns some value to given varnames in memory
         """
+        raise NotImplementedError
 
     def query(self, index):
         """
@@ -108,8 +117,14 @@ class Board:
         """
         raise NotImplementedError
 
-    def get_identifiers(self):
+    def get_identifiers(self, varName):
         """
         Retrieves the list of identifiers in the memory
         """
         raise NotImplementedError
+
+    def eout(self, message):
+        """
+        Sends the message to stderr
+        """
+        print(message, file=sys.stderr)
