@@ -26,7 +26,8 @@ class Parser2048(Parser):
 
     @_("VALUE IN expr COMMA expr")
     def expr(self, p):
-        self.fmap["QUERY"](index=(p.expr0, p.expr1))
+        value = self.fmap["QUERY"](index=(p.expr0, p.expr1))
+        return value
 
     @_("OPERATION DIRECTION")
     def statement(self, p):
