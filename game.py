@@ -1,5 +1,8 @@
 import random
+import re
+from copy import deepcopy
 import sys
+from itertools import product
 
 
 class Tile:
@@ -11,61 +14,20 @@ class Tile:
     variables: list of variables mapped currently
     """
 
-    def __init__(self, index, value=0, variables=[]):
-        self.value = value
-        self.variables = variables
+    def __init__(self, index):
+        super().__init__()
+        self.value = 0
+        self.index = index
+        self.variables = list()
+
+    def re_index(self, index):
+        """
+        Update index of tile after move
+        """
         self.index = index
 
     def __repr__(self):
         return "%4d " % self.value if self.value > 0 else " " * 5
-
-    def __add__(self, tile):
-        """
-        The add operation on a tile, updating the values and histories
-        paramaters:
-        tile: tile object for operation
-        """
-        raise NotImplementedError
-
-    def __sub__(self, tile):
-        """
-        The sub operation on a tile, updating the values and histories
-        paramaters:
-        tile: tile object for operation
-        """
-        raise NotImplementedError
-
-    def __mul__(self, tile):
-        """
-        The mul operation on a tile, updating the values and histories
-        paramaters:
-        tile: tile object for operation
-        """
-        raise NotImplementedError
-
-    def __truediv__(self, tile):
-        """
-        The divide operation on a tile, updating the values and histories
-        paramaters:
-        tile: tile object for operation
-        """
-        raise NotImplementedError
-
-    def assign(self, value):
-        """
-        Assign the value for the given tile
-        parameters:
-        value: the value to be updated
-        """
-        raise NotImplementedError
-
-    def merge(self, variables):
-        """
-        merges variables of tile
-        parameters:
-        variables: the list of variables to be merged
-        """
-        raise NotImplementedError
 
 
 class Board:
@@ -76,12 +38,12 @@ class Board:
     size: 2-tuple of number of rows and columns
     """
 
-    def __init__(self, size=(4, 4), target=2048):
+    def __init__(self, size=(4, 4)):
         self.rows, self.columns = size
-        self.matrix = [
-            [Tile(index=(r, c)) for c in range(self.columns)] for r in range(self.rows)
-        ]
-        self.target = target
+        self.matrix = self.empty_matrix()
+        self.add_random_tile()
+        self.add_random_tile()
+
         self.fmap = {
             "NAME": self.name,
             "ASSIGN": self.assign,
@@ -90,38 +52,186 @@ class Board:
             "get_id": self.get_identifiers,
         }
 
+    def empty_matrix(self):
+        """
+        Creates an empty board
+        """
+        return [
+            [Tile(index=(r, c)) for c in range(self.columns)] for r in range(self.rows)
+        ]
+
+    def update_indexes(self):
+        """
+        Update All indexes after moving
+        """
+        for row, col in product(range(self.rows), range(self.columns)):
+            self.matrix[row][col].re_index((row, col))
+
     def __repr__(self):
-        return "\n".join([row.__repr__() for row in self.matrix]).replace(",", "|")
+        """
+        Printer Function
+        """
+        return re.sub(
+            r"[\,\[\]]", "|", "\n".join([row.__repr__() for row in self.matrix])
+        )
+
+    def compress(self):
+        """
+        Compress Utility Function
+        """
+        new_mat = self.empty_matrix()
+        for i in range(self.rows):
+            pos = 0
+            for j in range(self.columns):
+                if self.matrix[i][j].value != 0:
+                    new_mat[i][pos] = deepcopy(self.matrix[i][j])
+                    pos += 1
+        self.matrix.clear()
+        self.matrix = deepcopy(new_mat)
+
+    def merge(self, operation):
+        """
+        Merge operation for tiles
+        """
+        for i in range(self.rows):
+            for j in range(self.columns - 1):
+                if (
+                    self.matrix[i][j].value == self.matrix[i][j + 1].value
+                    and self.matrix[i][j].value != 0
+                ):
+                    if operation == "SUBSTRACT":
+                        self.matrix[i][j].value = 0
+                        self.matrix[i][j].variables.clear()
+
+                    else:
+                        if operation == "ADD":
+                            self.matrix[i][j].value *= 2
+                        elif operation == "MULTIPLY":
+                            self.matrix[i][j].value *= self.matrix[i][j].value
+                        elif operation == "DIVIDE":
+                            self.matrix[i][j].value = 1
+
+                        self.matrix[i][j].variables.extend(
+                            self.matrix[i][j + 1].variables
+                        )
+
+                    self.matrix[i][j + 1].value = 0
+                    self.matrix[i][j + 1].variables.clear()
+
+    def reverse_matrix(self):
+        """
+        Returns the reverse of matrix
+        """
+        for row in range(self.rows):
+            self.matrix[row].reverse()
+
+    def transpose(self):
+        """
+        Returns the transpose of matrix
+        """
+        for row in range(self.rows):
+            for col in range(row):
+                self.matrix[row][col], self.matrix[col][row] = (
+                    self.matrix[col][row],
+                    self.matrix[row][col],
+                )
+
+    def move(self, direction, operation, verbose=True):
+        """
+        Move Operation, Moves in the given direction and applies the given operation
+        """
+        if direction == "UP":
+            self.transpose()
+            self.move("LEFT", operation, verbose=False)
+            self.transpose()
+        elif direction == "DOWN":
+            self.transpose()
+            self.move("RIGHT", operation, verbose=False)
+            self.transpose()
+        elif direction == "LEFT":
+            self.compress()
+            self.merge(operation)
+            self.compress()
+        elif direction == "RIGHT":
+            self.reverse_matrix()
+            self.move("LEFT", operation, verbose=False)
+            self.reverse_matrix()
+        else:
+            print("INVALID DIRECTION")
+
+        if not self.is_game_over() and verbose:
+            self.add_random_tile()
+            print(self)
+
+        self.update_indexes()
 
     def assign(self, value, index):
         """
         Assign Operation, Takes index and value and assigns value to that index
         """
-        raise NotImplementedError
-
-    def move(self, direction, operation):
-        """
-        Move Operation, Moves in the given direction and applies the given operation
-        """
-        raise NotImplementedError
-
-    def name(self, varName, index):
-        """
-        Assigns some value to given varnames in memory
-        """
-        raise NotImplementedError
+        x, y = index
+        x, y = x - 1, y - 1
+        if not self.is_valid(x, y):
+            raise Exception
+        self.matrix[x][y].value = value
+        print(self)
 
     def query(self, index):
         """
         Returns the value on given index
         """
-        raise NotImplementedError
+        x, y = index
+        x, y = x - 1, y - 1
+        if not self.is_valid(x, y):
+            raise Exception
+        value = self.matrix[x][y].value
+        print(value)
+        return value
 
-    def get_identifiers(self, varName):
+    def name(self, varName, index):
         """
-        Retrieves the list of identifiers in the memory
+        Assigns some value to given varnames in memory
         """
-        raise NotImplementedError
+        x, y = index
+        x, y = x - 1, y - 1
+        if not self.is_valid(x, y) or self.matrix[x][y] == 0:
+            raise Exception
+        self.matrix[x][y].variables.append(varName)
+
+    def add_random_tile(self):
+        row, col = random.choice(
+            [
+                index
+                for index in product(range(self.rows), range(self.columns))
+                if self.matrix[index[0]][index[1]].value == 0
+            ],
+        )
+        self.matrix[row][col].value = 2 if random.random() <= 0.5 else 4
+
+    def is_game_over(self):
+        dx = [0, 1, 0, -1]
+        dy = [1, 0, -1, 0]
+        for i, j in product(range(self.rows), range(self.columns)):
+            if self.matrix[i][j].value == 0:
+                return False
+            for k in range(4):
+                x = i + dx[k]
+                y = j + dy[k]
+                if (
+                    self.is_valid(x, y)
+                    and self.matrix[x][y].value == self.matrix[i][j].value
+                ):
+                    return False
+        return True
+
+    def is_valid(self, x, y):
+        return x >= 0 and y >= 0 and x < self.rows and y < self.columns
+
+    def get_identifiers(self):
+        for row in self.matrix:
+            for tile in row:
+                for var in tile.variables:
+                    print(tile.index, var)
 
     def eout(self, message):
         """

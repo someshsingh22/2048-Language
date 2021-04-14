@@ -2,9 +2,10 @@ from game import Board
 from lexer import Lexer2048
 from parser import Parser2048
 
-board = Board(size=(4, 4), target=69)
+board = Board(size=(4, 4))
 lexer, parser = Lexer2048(), Parser2048(fmap=board.fmap)
-
+print("Welcome to the 2048 Gaming Language, Below is the Board. Happy Coding!")
+print(board)
 while True:
     try:
         command = lexer.err(input("2048>"))
