@@ -52,7 +52,9 @@ class Board:
             "get_id": self.get_identifiers,
         }
 
-        print("2048 >>> Welcome to the 2048 Gaming Language, Below is the Board. Happy Coding!")
+        print(
+            "2048 >>> Welcome to the 2048 Gaming Language, Below is the Board. Happy Coding!"
+        )
         print(self)
 
     def empty_matrix(self):
@@ -187,7 +189,7 @@ class Board:
         """
         x, y = index
         x, y = x - 1, y - 1
-        if not self.is_valid(x, y):
+        if not self.is_valid(x, y) or self.empty_index(x, y):
             raise Exception
         value = self.matrix[x][y].value
         print(value)
@@ -199,7 +201,7 @@ class Board:
         """
         x, y = index
         x, y = x - 1, y - 1
-        if not self.is_valid(x, y) or self.matrix[x][y] == 0:
+        if not self.is_valid(x, y) or self.empty_index(x, y):
             raise Exception
         self.matrix[x][y].variables.append(varName)
 
@@ -228,6 +230,9 @@ class Board:
                 ):
                     return False
         return True
+
+    def empty_index(self, x, y):
+        return self.matrix[x][y] == 0
 
     def is_valid(self, x, y):
         return x >= 0 and y >= 0 and x < self.rows and y < self.columns
