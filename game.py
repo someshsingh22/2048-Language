@@ -52,6 +52,9 @@ class Board:
             "get_id": self.get_identifiers,
         }
 
+        print("Welcome to the 2048 Gaming Language, Below is the Board. Happy Coding!")
+        print(self)
+
     def empty_matrix(self):
         """
         Creates an empty board
@@ -99,7 +102,7 @@ class Board:
                     self.matrix[i][j].value == self.matrix[i][j + 1].value
                     and self.matrix[i][j].value != 0
                 ):
-                    if operation == "SUBSTRACT":
+                    if operation == "SUBTRACT":
                         self.matrix[i][j].value = 0
                         self.matrix[i][j].variables.clear()
 
@@ -174,6 +177,8 @@ class Board:
         if not self.is_valid(x, y):
             raise Exception
         self.matrix[x][y].value = value
+        if value == 0:
+            self.matrix[x][y].variables.clear()
         print(self)
 
     def query(self, index):
@@ -228,13 +233,23 @@ class Board:
         return x >= 0 and y >= 0 and x < self.rows and y < self.columns
 
     def get_identifiers(self):
-        for row in self.matrix:
-            for tile in row:
-                for var in tile.variables:
-                    print(tile.index, var)
+        var_out = ""
+        for row, col in product(range(self.rows), range(self.columns)):
+            tile = self.matrix[row][col]
+            index = "%d,%d" % (row + 1, col + 1)
+            var = ",".join(tile.variables)
+            if var:
+                var_out += index + var + "\40"
+        return var_out
 
-    def eout(self, message):
+    def get_row_major(self):
+        row_maj = []
+        for row in self.matrix:
+            row_maj.extend([str(tile.value) for tile in row])
+        return "\40".join(row_maj)
+
+    def eout(self):
         """
         Sends the message to stderr
         """
-        print(message, file=sys.stderr)
+        print("%s %s" % (self.get_row_major(), self.get_identifiers()), file=sys.stderr)
