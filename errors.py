@@ -150,3 +150,16 @@ class WrongIndex(RuntimeException):
             irange,
         )
         super().__init__(self.message)
+
+
+class ParserException(SyntaxException):
+    """
+    Raised when an error is raised during parsing:
+
+    token: token at which the parser found the error
+    """
+
+    def __init__(self, token):
+
+        self.message = "Invalid token %s found" % token.type
+        super().__init__(self.message)
