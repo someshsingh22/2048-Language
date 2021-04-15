@@ -52,7 +52,7 @@ class Board:
             "get_id": self.get_identifiers,
         }
 
-        print("Welcome to the 2048 Gaming Language, Below is the Board. Happy Coding!")
+        print("2048 >>> Welcome to the 2048 Gaming Language, Below is the Board. Happy Coding!")
         print(self)
 
     def empty_matrix(self):
