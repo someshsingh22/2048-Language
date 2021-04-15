@@ -1,6 +1,6 @@
 from sly import Parser
 from lexer import Lexer2048
-from errors import ParserException
+from errors import ParserException, InvalidAsssign
 
 
 class Parser2048(Parser):
@@ -34,6 +34,8 @@ class Parser2048(Parser):
 
     @_("ASSIGN expr TO expr COMMA expr")
     def statement(self, p):
+        if p.expr0 < 0:
+            raise InvalidAsssign(p.expr0)
         self.fmap["ASSIGN"](value=p.expr0, index=(p.expr1, p.expr2))
 
     @_("VALUE IN expr COMMA expr")

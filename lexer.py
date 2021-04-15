@@ -6,7 +6,7 @@ from errors import ForeignCharacter, WrongCharacter, FalseTermination, FullStopN
 
 class Lexer2048(Lexer):
     def err(self, text, lineno=1, index=0):
-        vocab = set(string.ascii_letters + string.digits + " .,?")
+        vocab = set(string.ascii_letters + string.digits + " .,?-")
         for i, char in enumerate(text):
             if char not in vocab:
                 raise ForeignCharacter(i, char)
@@ -48,7 +48,7 @@ class Lexer2048(Lexer):
 
     # Identifiers and keywords
     COMMA = r"\,"
-    NUMBER = r"\d+"
+    NUMBER = r"-?\d+"
     IDENTIFIER = r"[a-zA-Z]+[a-zA-Z0-9]*"
     IDENTIFIER["ADD"] = OPERATION
     IDENTIFIER["SUBTRACT"] = OPERATION

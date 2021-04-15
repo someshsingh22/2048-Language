@@ -96,24 +96,9 @@ class InvalidAsssign(SyntaxException):
     value: the Invalid value that was found
     """
 
-    def __init__(self, index, value):
+    def __init__(self, value):
 
-        self.message = "Invalid value %s found at index %d" % (value, index)
-        super().__init__(self.message)
-
-
-class InvalidIndex(SyntaxException):
-    """
-    Raised when a Invalid index is passed to the parser
-    parameter:
-
-    index: index at which Invalid index was found
-    value: the Invalid index that was found
-    """
-
-    def __init__(self, index, index_value):
-
-        self.message = "Invalid index %s found at index %d" % (index_value, index)
+        self.message = "Invalid value %d found at index" % value
         super().__init__(self.message)
 
 

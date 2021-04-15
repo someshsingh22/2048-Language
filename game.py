@@ -184,7 +184,7 @@ class Board:
         x, y = x - 1, y - 1
 
         if not self.is_valid(x, y):
-            raise WrongIndex(index, (1, 1), (self.rows + 1, self.columns + 1))
+            raise WrongIndex(index, (1, 1), (self.rows, self.columns))
 
         self.matrix[x][y].value = value
         if value == 0:
@@ -199,7 +199,7 @@ class Board:
         x, y = x - 1, y - 1
 
         if not self.is_valid(x, y):
-            raise WrongIndex(index, (1, 1), (self.rows + 1, self.columns + 1))
+            raise WrongIndex(index, (1, 1), (self.rows, self.columns))
 
         elif self.empty_index(x, y):
             raise EmptyTileQueryException(index)
@@ -218,7 +218,7 @@ class Board:
             raise IdentifierExists(varName)
 
         elif not self.is_valid(x, y):
-            raise WrongIndex(index, (1, 1), (self.rows + 1, self.columns + 1))
+            raise WrongIndex(index, (1, 1), (self.rows, self.columns))
 
         elif self.empty_index(x, y):
             raise EmptyTileNamingException(index)
@@ -253,7 +253,7 @@ class Board:
         return True
 
     def empty_index(self, x, y):
-        return self.matrix[x][y] == 0
+        return self.matrix[x][y].value == 0
 
     def is_valid(self, x, y):
         return x >= 0 and y >= 0 and x < self.rows and y < self.columns
