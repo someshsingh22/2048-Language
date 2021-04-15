@@ -4,7 +4,7 @@ class SyntaxException(Exception):
     """
 
     def __init__(self, error):
-        self.message = "Syntax Error! : "
+        self.message = "Syntax Error: "
         super().__init__(self.message + error)
 
 
@@ -14,11 +14,11 @@ class RuntimeException(Exception):
     """
 
     def __init__(self, error):
-        self.message = "Runtime Error! : "
+        self.message = "Runtime Error: "
         super().__init__(self.message + error)
 
 
-class InvalidCharacter(SyntaxException):
+class ForeignCharacter(SyntaxException):
     """
     Raised when a foreign character is passed to the lexer
     parameter:
@@ -29,7 +29,7 @@ class InvalidCharacter(SyntaxException):
 
     def __init__(self, index, character):
 
-        self.message = "Invalid Character %c found at index %d" % (character, index)
+        self.message = "Foreign Character %c found at index %d" % (character, index)
         super().__init__(self.message)
 
 
@@ -48,7 +48,7 @@ class WrongCharacter(SyntaxException):
         super().__init__(self.message)
 
 
-class EndNotFound(SyntaxException):
+class FullStopNotFound(SyntaxException):
     """
     Raised when a full stop is not present.
     parameter:
