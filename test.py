@@ -10,7 +10,7 @@ while True:
     try:
         print("2048 >>>", end=" ")
         inp = input()
-        command = lexer.err(inp)
+        command = lexer.preprocess(inp)
         out = parser.parse(lexer.tokenize(command))
         board.eout()
 

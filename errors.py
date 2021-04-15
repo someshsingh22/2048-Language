@@ -56,7 +56,7 @@ class FullStopNotFound(SyntaxException):
 
     def __init__(self):
 
-        self.message = "Full Stop required to terminate the command"
+        self.message = "All commands must terminate with full stops '.'"
         super().__init__(self.message)
 
 
@@ -89,6 +89,18 @@ class ReservedIdentifier(SyntaxException):
         super().__init__(self.message)
 
 
+class IdentifierExists(RuntimeException):
+    """
+    Raised when assigning a name which already exists
+
+    varName: name of the variable
+    """
+
+    def __init__(self, varName):
+        self.message = "A variable with name %s already exists" % varName
+        super().__init__(self.message)
+
+
 class InvalidAsssign(SyntaxException):
     """
     Raised when a Invalid assignment value is passed to the parser
@@ -100,7 +112,7 @@ class InvalidAsssign(SyntaxException):
 
     def __init__(self, value):
 
-        self.message = "Invalid value %d found at index" % value
+        self.message = "Invalid value %d negative values cannot be assigned" % value
         super().__init__(self.message)
 
 
@@ -134,18 +146,6 @@ class ParserException(SyntaxException):
     def __init__(self, token):
 
         self.message = "Invalid token %s found" % token.type
-        super().__init__(self.message)
-
-
-class IdentifierExists(RuntimeException):
-    """
-    Raised when assigning a name which already exists
-
-    varName: name of the variable
-    """
-
-    def __init__(self, varName):
-        self.message = "A variable with name %s already exists" % varName
         super().__init__(self.message)
 
 
