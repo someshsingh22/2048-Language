@@ -81,9 +81,11 @@ class ReservedIdentifier(SyntaxException):
     identifier: the reserved identifier that was found
     """
 
-    def __init__(self, index, identifier):
+    def __init__(self, identifier):
 
-        self.message = "Reserved identifier %s found at index %d" % (identifier, index)
+        self.message = (
+            "%s cannot be used for naming, it is a reserved keyword" % identifier
+        )
         super().__init__(self.message)
 
 
@@ -164,4 +166,17 @@ class EmptyTileQueryException(RuntimeException):
 
     def __init__(self, index):
         self.message = "Empty Tile at %d,%d cannot be queried" % index
+        super().__init__(self.message)
+
+
+class NamedParserException(SyntaxException):
+    """
+    Raised when an error is raised during parsing:
+
+    token: token at which the parser found the error
+    """
+
+    def __init__(self, pre, post, correct):
+
+        self.message = "%s cannot be followed by %s, try %s" % (pre, post, correct)
         super().__init__(self.message)
