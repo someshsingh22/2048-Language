@@ -1,6 +1,5 @@
 from sly import Lexer
 import re
-from utils import areBracketsBalanced
 from errors import InvalidCharacter, WrongCharacter, FalseTermination, EndNotFound
 
 

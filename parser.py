@@ -1,9 +1,21 @@
 from sly import Parser
 from lexer import Lexer2048
+from errors import SyntaxException
 
 
 class Parser2048(Parser):
     tokens = Lexer2048.tokens
+
+    def error(self, token):
+        """
+        Error Handling for parse-syntax errors
+        """
+        if token:
+            print(f"sly: Syntax error, token={token.type}")
+            raise SyntaxException
+        else:
+            print(("sly: Parse error in input. EOF\n"))
+            raise SyntaxException
 
     def __init__(self, fmap=None):
         self.fmap = fmap
@@ -18,20 +30,17 @@ class Parser2048(Parser):
 
     @_("VAR IDENTIFIER IS expr COMMA expr")
     def statement(self, p):
-        return (p.IDENTIFIER, p.expr0, p.expr1)
+        self.fmap["NAME"](varName=p.IDENTIFIER, index=(p.expr0, p.expr1))
 
     @_("ASSIGN expr TO expr COMMA expr")
     def statement(self, p):
-        return (p.expr0, p.expr1, p.expr2)
+        self.fmap["ASSIGN"](value=p.expr0, index=(p.expr1, p.expr2))
 
     @_("VALUE IN expr COMMA expr")
     def expr(self, p):
-        return (p.expr0, p.expr1)
+        value = self.fmap["QUERY"](index=(p.expr0, p.expr1))
+        return value
 
     @_("OPERATION DIRECTION")
     def statement(self, p):
-        return (p.OPERATION, p.DIRECTION)
-
-    @_("IDENTIFIER")
-    def expr(self, p):
-        return p.IDENTIFIER
+        self.fmap["MOVE"](direction=p.DIRECTION, operation=p.OPERATION)
