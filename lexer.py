@@ -1,10 +1,15 @@
 from sly import Lexer
+import string
 import re
-from errors import InvalidCharacter, WrongCharacter, FalseTermination, EndNotFound
+from errors import ForeignCharacter, WrongCharacter, FalseTermination, FullStopNotFound
 
 
 class Lexer2048(Lexer):
     def err(self, text, lineno=1, index=0):
+        vocab = set(string.ascii_letters + string.digits + " .,?-")
+        for i, char in enumerate(text):
+            if char not in vocab:
+                raise ForeignCharacter(i, char)
         ltext = text.rstrip()
         Q, D, length = ltext.find("?"), ltext.find("."), len(ltext)
         if Q >= 0:
@@ -17,7 +22,7 @@ class Lexer2048(Lexer):
                 raise WrongCharacter("?", Q)
         else:
             if D == -1:
-                raise EndNotFound
+                raise FullStopNotFound
             elif D != length - 1:
                 raise FalseTermination(D)
             else:
@@ -43,7 +48,7 @@ class Lexer2048(Lexer):
 
     # Identifiers and keywords
     COMMA = r"\,"
-    NUMBER = r"\d+"
+    NUMBER = r"-?\d+"
     IDENTIFIER = r"[a-zA-Z]+[a-zA-Z0-9]*"
     IDENTIFIER["ADD"] = OPERATION
     IDENTIFIER["SUBTRACT"] = OPERATION
@@ -61,4 +66,4 @@ class Lexer2048(Lexer):
     IDENTIFIER["IN"] = IN
 
     def error(self, t):
-        raise InvalidCharacter(self.index, t.value[0])
+        raise ForeignCharacter(self.index, t.value[0])
