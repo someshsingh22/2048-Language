@@ -1,9 +1,21 @@
 from sly import Parser
 from lexer import Lexer2048
+from errors import SyntaxException
 
 
 class Parser2048(Parser):
     tokens = Lexer2048.tokens
+
+    def error(self, token):
+        """
+        Error Handling for parse-syntax errors
+        """
+        if token:
+            print(f"sly: Syntax error, token={token.type}")
+            raise SyntaxException
+        else:
+            print(("sly: Parse error in input. EOF\n"))
+            raise SyntaxException
 
     def __init__(self, fmap=None):
         self.fmap = fmap
