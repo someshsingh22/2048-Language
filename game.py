@@ -3,6 +3,12 @@ import re
 from copy import deepcopy
 import sys
 from itertools import product
+from errors import (
+    WrongIndex,
+    IdentifierExists,
+    EmptyTileNamingException,
+    EmptyTileQueryException,
+)
 
 
 class Tile:
@@ -176,8 +182,10 @@ class Board:
         """
         x, y = index
         x, y = x - 1, y - 1
+
         if not self.is_valid(x, y):
-            raise Exception
+            raise WrongIndex(index, (1, 1), (self.rows, self.columns))
+
         self.matrix[x][y].value = value
         if value == 0:
             self.matrix[x][y].variables.clear()
@@ -189,8 +197,13 @@ class Board:
         """
         x, y = index
         x, y = x - 1, y - 1
-        if not self.is_valid(x, y) or self.empty_index(x, y):
-            raise Exception
+
+        if not self.is_valid(x, y):
+            raise WrongIndex(index, (1, 1), (self.rows, self.columns))
+
+        elif self.empty_index(x, y):
+            raise EmptyTileQueryException(index)
+
         value = self.matrix[x][y].value
         print(value)
         return value
@@ -201,9 +214,17 @@ class Board:
         """
         x, y = index
         x, y = x - 1, y - 1
-        if not self.is_valid(x, y) or self.empty_index(x, y):
-            raise Exception
-        self.matrix[x][y].variables.append(varName)
+        if self.varExists(varName):
+            raise IdentifierExists(varName)
+
+        elif not self.is_valid(x, y):
+            raise WrongIndex(index, (1, 1), (self.rows, self.columns))
+
+        elif self.empty_index(x, y):
+            raise EmptyTileNamingException(index)
+
+        else:
+            self.matrix[x][y].variables.append(varName)
 
     def add_random_tile(self):
         row, col = random.choice(
@@ -232,7 +253,7 @@ class Board:
         return True
 
     def empty_index(self, x, y):
-        return self.matrix[x][y] == 0
+        return self.matrix[x][y].value == 0
 
     def is_valid(self, x, y):
         return x >= 0 and y >= 0 and x < self.rows and y < self.columns
@@ -246,6 +267,13 @@ class Board:
             if var:
                 var_out += index + var + "\40"
         return var_out
+
+    def varExists(self, varName):
+        for row in range(self.rows):
+            for col in range(self.columns):
+                if varName in self.matrix[row][col].variables:
+                    return (row + 1, col + 1)
+        return None
 
     def get_row_major(self):
         row_maj = []
