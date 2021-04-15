@@ -142,12 +142,12 @@ class WrongIndex(RuntimeException):
     range: permissible range
     """
 
-    def __init__(self, index, index_value, irange):
+    def __init__(self, index, lindex, uindex):
 
-        self.message = "Invalid index %s found at index %d, index can vary from %s" % (
-            index_value,
-            index,
-            irange,
+        self.message = "Invalid index %s found, index can vary from %s to %s" % (
+            str(index),
+            str(lindex),
+            str(uindex),
         )
         super().__init__(self.message)
 
@@ -162,4 +162,26 @@ class ParserException(SyntaxException):
     def __init__(self, token):
 
         self.message = "Invalid token %s found" % token.type
+        super().__init__(self.message)
+
+
+class IdentifierExists(RuntimeException):
+    """
+    Raised when assigning a name which already exists
+
+    varName: name of the variable
+    """
+
+    def __init__(self, varName):
+        self.message = "A variable with name %s already exists" % varName
+        super().__init__(self.message)
+
+
+class EmptyTileNamingException(RuntimeException):
+    """
+    Raised when assigning a name to an empty tile
+    """
+
+    def __init__(self, index):
+        self.message = "Empty Tile at %d,%d cannot be named" % index
         super().__init__(self.message)
