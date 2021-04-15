@@ -12,10 +12,10 @@ class Parser2048(Parser):
         """
         if token:
             print(f"sly: Syntax error, token={token.type}")
-            raise ParserException
+            raise ParserException(token)
         else:
             print(("sly: Parse error in input. EOF\n"))
-            raise ParserException
+            raise ParserException(token)
 
     def __init__(self, fmap=None):
         self.fmap = fmap

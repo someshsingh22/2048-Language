@@ -72,21 +72,6 @@ class FalseTermination(SyntaxException):
         super().__init__(self.message)
 
 
-class InvalidIdentifier(SyntaxException):
-    """
-    Raised when an invalid identifier is passed to the lexer
-    parameter:
-
-    index: index at which invalid character was found
-    identifier: the invalid identifier that was found
-    """
-
-    def __init__(self, index, identifier):
-
-        self.message = "Invalid identifier %s found at index %d" % (identifier, index)
-        super().__init__(self.message)
-
-
 class ReservedIdentifier(SyntaxException):
     """
     Raised when an reserved identifier is passed to the lexer
@@ -144,7 +129,7 @@ class WrongIndex(RuntimeException):
 
     def __init__(self, index, lindex, uindex):
 
-        self.message = "Invalid index %s found, index can vary from %s to %s" % (
+        self.message = "Wrong index %s found, index can vary from %s to %s" % (
             str(index),
             str(lindex),
             str(uindex),
@@ -184,4 +169,14 @@ class EmptyTileNamingException(RuntimeException):
 
     def __init__(self, index):
         self.message = "Empty Tile at %d,%d cannot be named" % index
+        super().__init__(self.message)
+
+
+class EmptyTileQueryException(RuntimeException):
+    """
+    Raised when assigning a name to an empty tile
+    """
+
+    def __init__(self, index):
+        self.message = "Empty Tile at %d,%d cannot be queried" % index
         super().__init__(self.message)
