@@ -32,7 +32,3 @@ class Parser2048(Parser):
     @_("OPERATION DIRECTION")
     def statement(self, p):
         self.fmap["MOVE"](direction=p.DIRECTION, operation=p.OPERATION)
-
-    @_("IDENTIFIER")
-    def expr(self, p):
-        return self.fmap["get_id"](varName=p.IDENTIFIER)
