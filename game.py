@@ -90,20 +90,21 @@ class Board:
 
         option_row[0].value = 4
         option_row[1].value = 0
-        option_row[2].value = 4
-        option_row[3].value = 0
+        option_row[2].value = 0
+        option_row[3].value = 4
 
         print("\nB:\n" + re.sub(r"[\,\[\]]", "|", option_row.__repr__()))
 
         self.flag = -1
         while self.flag < 0:
-            inp = input("\033[32m2048 >>> \033[0m")
+            print("\033[32m2048 >>> \033[0m", end="")
+            inp = input()
             if inp == "A":
                 print("\033[34mA rule will be followed throughout \033[0m")
-                self.flag = 0
+                self.flag = 1
             elif inp == "B":
                 print("\033[34mB rule will be followed throughout \033[0m")
-                self.flag = 1
+                self.flag = 0
             else:
                 print(
                     "\033[34mYou selected neither option, please select A or B \033[0m"
@@ -213,7 +214,8 @@ class Board:
         elif direction == "LEFT":
             self.compress()
             self.merge(operation)
-            self.compress()
+            if self.flag == 1:
+                self.compress()
         elif direction == "RIGHT":
             self.reverse_matrix()
             self.move("LEFT", operation, verbose=False)
