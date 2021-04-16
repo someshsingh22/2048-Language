@@ -15,6 +15,7 @@ while True:
         board.eout()
 
     except EOFError:
+        print()
         exit()
 
     except Exception as E:

@@ -203,3 +203,16 @@ class NamedParserException(SyntaxException):
             % (pre, post, correct)
         )
         super().__init__(self.message)
+
+
+class ParserEOFException(SyntaxException):
+    """
+    Raised when an error is raised during parsing:
+
+    token: token at which the parser found the error
+    """
+
+    def __init__(self):
+
+        self.message = "Parse error in Command. Reached EOL"
+        super().__init__(self.message)

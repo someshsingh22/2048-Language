@@ -5,6 +5,7 @@ from errors import (
     InvalidAsssign,
     NamedParserException,
     ReservedIdentifier,
+    ParserEOFException,
 )
 
 
@@ -29,11 +30,9 @@ class Parser2048(Parser):
         Error Handling for parse-syntax errors
         """
         if token:
-            print(f"Syntax error : unexpected token {token.type} found")
             raise ParserException(token)
         else:
-            print("Syntax error: Parse error in Command. Reached EOL")
-            raise ParserException(token)
+            raise ParserEOFException
 
     @_("expr")
     def statement(self, p):

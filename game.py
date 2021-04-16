@@ -63,8 +63,15 @@ class Board:
             "MOVE": self.move,
         }
 
-        print("2048 >>> Welcome to the 2048 Gaming Language")
-        print("On subtracting left what should the output be in this case")
+        print("\033[32m2048 >>> Welcome to the 2048 Gaming Language \033[0m")
+        self.choice()
+        print("\033[32m2048 >>> Below is the Board. Happy Coding! \033[0m")
+        print(self)
+
+    def choice(self):
+        print(
+            "\033[34mOn subtracting left what should the output be in this case \033[0m"
+        )
 
         option_row = [Tile((0, 0)) for i in range(4)]
         option_row[0].value = 4
@@ -90,19 +97,18 @@ class Board:
 
         self.flag = -1
         while self.flag < 0:
-            inp = input("2048 >>>")
+            inp = input("\033[32m2048 >>> \033[0m")
             if inp == "A":
-                print("A rule will be followed throughout")
+                print("\033[34mA rule will be followed throughout \033[0m")
                 self.flag = 0
             elif inp == "B":
-                print("B rule will be followed throughout")
+                print("\033[34mB rule will be followed throughout \033[0m")
                 self.flag = 1
             else:
-                print("You selected neither option, please select A or B")
+                print(
+                    "\033[34mYou selected neither option, please select A or B \033[0m"
+                )
                 self.flag = -1
-
-        print("Below is the Board. Happy Coding!")
-        print(self)
 
     def empty_matrix(self):
         """
@@ -123,8 +129,12 @@ class Board:
         """
         Printer Function
         """
-        return re.sub(
-            r"[\,\[\]]", "|", "\n".join([row.__repr__() for row in self.matrix])
+        return (
+            "\033[33m"
+            + re.sub(
+                r"[\,\[\]]", "|", "\n".join([row.__repr__() for row in self.matrix])
+            )
+            + "\033[0m"
         )
 
     def compress(self):
