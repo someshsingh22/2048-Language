@@ -4,7 +4,8 @@ class SyntaxException(Exception):
     """
 
     def __init__(self, error):
-        self.message = "Syntax Error: "
+
+        self.message = "\033[31m" + "Syntax Error: " + "\033[0m"
         super().__init__(self.message + error)
 
 
@@ -14,7 +15,7 @@ class RuntimeException(Exception):
     """
 
     def __init__(self, error):
-        self.message = "Runtime Error: "
+        self.message = "\033[31m" + "Runtime Error: " + "\033[0m"
         super().__init__(self.message + error)
 
 
@@ -29,7 +30,10 @@ class ForeignCharacter(SyntaxException):
 
     def __init__(self, index, character):
 
-        self.message = "Foreign Character %c found at index %d" % (character, index)
+        self.message = (
+            "Foreign Character \033[33m %c \033[0m found at index \033[33m %d \033[0m"
+            % (character, index)
+        )
         super().__init__(self.message)
 
 
@@ -44,7 +48,10 @@ class WrongCharacter(SyntaxException):
 
     def __init__(self, character, index):
 
-        self.message = "%c wrongly referenced at index %d" % (character, index)
+        self.message = (
+            "\033[33m %c \033[0m wrongly referenced at index \033[33m %d \033[0m"
+            % (character, index)
+        )
         super().__init__(self.message)
 
 
@@ -56,7 +63,7 @@ class FullStopNotFound(SyntaxException):
 
     def __init__(self):
 
-        self.message = "Full Stop required to terminate the command"
+        self.message = "All commands must terminate with full stops '.'"
         super().__init__(self.message)
 
 
@@ -68,7 +75,9 @@ class FalseTermination(SyntaxException):
 
     def __init__(self, index):
 
-        self.message = "Non terminating Full Stop present at index %d" % index
+        self.message = (
+            "Non terminating Full Stop present at index \033[33m %d \033[0m" % index
+        )
         super().__init__(self.message)
 
 
@@ -84,7 +93,22 @@ class ReservedIdentifier(SyntaxException):
     def __init__(self, identifier):
 
         self.message = (
-            "%s cannot be used for naming, it is a reserved keyword" % identifier
+            "\033[33m %s \033[0m cannot be used for naming, it is a reserved keyword"
+            % identifier
+        )
+        super().__init__(self.message)
+
+
+class IdentifierExists(RuntimeException):
+    """
+    Raised when assigning a name which already exists
+
+    varName: name of the variable
+    """
+
+    def __init__(self, varName):
+        self.message = (
+            "A variable with name \033[33m %s \033[0m already exists" % varName
         )
         super().__init__(self.message)
 
@@ -100,7 +124,10 @@ class InvalidAsssign(SyntaxException):
 
     def __init__(self, value):
 
-        self.message = "Invalid value %d found at index" % value
+        self.message = (
+            "Invalid value \033[33m %d \033[0m negative values cannot be assigned"
+            % value
+        )
         super().__init__(self.message)
 
 
@@ -116,10 +143,9 @@ class WrongIndex(RuntimeException):
 
     def __init__(self, index, lindex, uindex):
 
-        self.message = "Wrong index %s found, index can vary from %s to %s" % (
-            str(index),
-            str(lindex),
-            str(uindex),
+        self.message = (
+            "Wrong index \033[33m %s \033[0m found, index can vary from \033[33m %s \033[0m to \033[33m %s \033[0m"
+            % (str(index), str(lindex), str(uindex),)
         )
         super().__init__(self.message)
 
@@ -133,19 +159,7 @@ class ParserException(SyntaxException):
 
     def __init__(self, token):
 
-        self.message = "Invalid token %s found" % token.type
-        super().__init__(self.message)
-
-
-class IdentifierExists(RuntimeException):
-    """
-    Raised when assigning a name which already exists
-
-    varName: name of the variable
-    """
-
-    def __init__(self, varName):
-        self.message = "A variable with name %s already exists" % varName
+        self.message = "Invalid token \033[33m %s \033[0m found" % token.type
         super().__init__(self.message)
 
 
@@ -155,7 +169,10 @@ class EmptyTileNamingException(RuntimeException):
     """
 
     def __init__(self, index):
-        self.message = "Empty Tile at %d,%d cannot be named" % index
+        self.message = (
+            "Empty Tile at \033[33m %d \033[0m,\033[33m %d \033[0m cannot be named"
+            % index
+        )
         super().__init__(self.message)
 
 
@@ -165,7 +182,10 @@ class EmptyTileQueryException(RuntimeException):
     """
 
     def __init__(self, index):
-        self.message = "Empty Tile at %d,%d cannot be queried" % index
+        self.message = (
+            "Empty Tile at \033[33m %d \033[0m,\033[33m %d \033[0m cannot be queried"
+            % index
+        )
         super().__init__(self.message)
 
 
@@ -178,5 +198,21 @@ class NamedParserException(SyntaxException):
 
     def __init__(self, pre, post, correct):
 
-        self.message = "%s cannot be followed by %s, try %s" % (pre, post, correct)
+        self.message = (
+            "\033[33m %s \033[0m cannot be followed by \033[33m %s \033[0m, try \033[33m %s \033[0m"
+            % (pre, post, correct)
+        )
+        super().__init__(self.message)
+
+
+class ParserEOFException(SyntaxException):
+    """
+    Raised when an error is raised during parsing:
+
+    token: token at which the parser found the error
+    """
+
+    def __init__(self):
+
+        self.message = "Parse error in Command. Reached EOL"
         super().__init__(self.message)

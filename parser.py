@@ -5,25 +5,34 @@ from errors import (
     InvalidAsssign,
     NamedParserException,
     ReservedIdentifier,
+    ParserEOFException,
 )
 
 
 class Parser2048(Parser):
+    """
+    Parser2048 Class, Subclass of sly.parser Used to parse the string and map the grammar to suitable actions acc to the interpretation
+
+    Grammar:
+    expr: Expressions that Evaluate to numeric Values
+    statement: Command Statements
+    nonexpr: non expression keywords / identifiers
+    nonindex: COMMA separated tokens which are not expressions
+    """
+
     tokens = Lexer2048.tokens
+
+    def __init__(self, fmap=None):
+        self.fmap = fmap
 
     def error(self, token):
         """
         Error Handling for parse-syntax errors
         """
         if token:
-            print(f"sly: Syntax error, token={token.type}")
             raise ParserException(token)
         else:
-            print(("sly: Parse error in input. EOF\n"))
-            raise ParserException(token)
-
-    def __init__(self, fmap=None):
-        self.fmap = fmap
+            raise ParserEOFException
 
     @_("expr")
     def statement(self, p):

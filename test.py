@@ -8,13 +8,14 @@ lexer, parser = Lexer2048(), Parser2048(fmap=board.fmap)
 
 while True:
     try:
-        print("2048 >>>", end=" ")
+        print("\033[32m" + "2048 >>>" + "\033[0m", end=" ")
         inp = input()
-        command = lexer.err(inp)
+        command = lexer.preprocess(inp)
         out = parser.parse(lexer.tokenize(command))
         board.eout()
 
     except EOFError:
+        print()
         exit()
 
     except Exception as E:

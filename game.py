@@ -18,6 +18,7 @@ class Tile:
     parameters:
     value: the value present in the tile currently
     variables: list of variables mapped currently
+    index: refers to the location of tile in the matrix
     """
 
     def __init__(self, index):
@@ -42,6 +43,11 @@ class Board:
 
     Parameters:
     size: 2-tuple of number of rows and columns
+
+    variables:
+    rows, columns: The limit for number of rows/columns
+    matrix: 2D Array for keeping track of tiles
+    fmap: function maps that maps strings that refers to the member functions of the class
     """
 
     def __init__(self, size=(4, 4)):
@@ -55,11 +61,17 @@ class Board:
             "ASSIGN": self.assign,
             "QUERY": self.query,
             "MOVE": self.move,
-            "get_id": self.get_identifiers,
         }
 
-        print("2048 >>> Welcome to the 2048 Gaming Language")
-        print("On subtracting left what should the output be in this case")
+        print("\033[32m2048 >>> Welcome to the 2048 Gaming Language \033[0m")
+        self.choice()
+        print("\033[32m2048 >>> Below is the Board. Happy Coding! \033[0m")
+        print(self)
+
+    def choice(self):
+        print(
+            "\033[34mOn subtracting left what should the output be in this case \033[0m"
+        )
 
         option_row = [Tile((0, 0)) for i in range(4)]
         option_row[0].value = 4
@@ -85,19 +97,18 @@ class Board:
 
         self.flag = -1
         while self.flag < 0:
-            inp = input("2048 >>>")
+            inp = input("\033[32m2048 >>> \033[0m")
             if inp == "A":
-                print("A rule will be followed throughout")
+                print("\033[34mA rule will be followed throughout \033[0m")
                 self.flag = 0
             elif inp == "B":
-                print("B rule will be followed throughout")
+                print("\033[34mB rule will be followed throughout \033[0m")
                 self.flag = 1
             else:
-                print("You selected neither option, please select A or B")
+                print(
+                    "\033[34mYou selected neither option, please select A or B \033[0m"
+                )
                 self.flag = -1
-
-        print("Below is the Board. Happy Coding!")
-        print(self)
 
     def empty_matrix(self):
         """
@@ -118,8 +129,12 @@ class Board:
         """
         Printer Function
         """
-        return re.sub(
-            r"[\,\[\]]", "|", "\n".join([row.__repr__() for row in self.matrix])
+        return (
+            "\033[33m"
+            + re.sub(
+                r"[\,\[\]]", "|", "\n".join([row.__repr__() for row in self.matrix])
+            )
+            + "\033[0m"
         )
 
     def compress(self):
@@ -262,7 +277,10 @@ class Board:
         else:
             self.matrix[x][y].variables.append(varName)
 
-    def add_random_tile(self):
+    def add_random_tile(self, p=0.5):
+        """
+        Adds a random tile to the board, being 2 or 4 with probability p, 1-p
+        """
         row, col = random.choice(
             [
                 index
@@ -270,9 +288,12 @@ class Board:
                 if self.matrix[index[0]][index[1]].value == 0
             ],
         )
-        self.matrix[row][col].value = 2 if random.random() <= 0.5 else 4
+        self.matrix[row][col].value = 2 if random.random() <= p else 4
 
     def is_game_over(self):
+        """
+        Checks if the game is over
+        """
         dx = [0, 1, 0, -1]
         dy = [1, 0, -1, 0]
         for i, j in product(range(self.rows), range(self.columns)):
@@ -289,12 +310,21 @@ class Board:
         return True
 
     def empty_index(self, x, y):
+        """
+        Checks if the tile is empty for given row, col
+        """
         return self.matrix[x][y].value == 0
 
     def is_valid(self, x, y):
+        """
+        checks if the index is out of bounds
+        """
         return x >= 0 and y >= 0 and x < self.rows and y < self.columns
 
     def get_identifiers(self):
+        """
+        Gets string of space separated index / variables
+        """
         var_out = ""
         for row, col in product(range(self.rows), range(self.columns)):
             tile = self.matrix[row][col]
@@ -305,6 +335,9 @@ class Board:
         return var_out
 
     def varExists(self, varName):
+        """
+        Checks if a variable already exists
+        """
         for row in range(self.rows):
             for col in range(self.columns):
                 if varName in self.matrix[row][col].variables:
@@ -312,6 +345,9 @@ class Board:
         return None
 
     def get_row_major(self):
+        """
+        Gets row major output
+        """
         row_maj = []
         for row in self.matrix:
             row_maj.extend([str(tile.value) for tile in row])
