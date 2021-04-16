@@ -58,9 +58,45 @@ class Board:
             "get_id": self.get_identifiers,
         }
 
-        print(
-            "2048 >>> Welcome to the 2048 Gaming Language, Below is the Board. Happy Coding!"
-        )
+        print("2048 >>> Welcome to the 2048 Gaming Language")
+        print("On subtracting left what should the output be in this case")
+
+        option_row = [Tile((0, 0)) for i in range(4)]
+        option_row[0].value = 4
+        option_row[1].value = 2
+        option_row[2].value = 2
+        option_row[3].value = 4
+
+        print(re.sub(r"[\,\[\]]", "|", option_row.__repr__()))
+
+        option_row[0].value = 4
+        option_row[1].value = 4
+        option_row[2].value = 0
+        option_row[3].value = 0
+
+        print("\nA:\n" + re.sub(r"[\,\[\]]", "|", option_row.__repr__()))
+
+        option_row[0].value = 4
+        option_row[1].value = 0
+        option_row[2].value = 4
+        option_row[3].value = 0
+
+        print("\nB:\n" + re.sub(r"[\,\[\]]", "|", option_row.__repr__()))
+
+        self.flag = -1
+        while self.flag < 0:
+            inp = input("2048 >>>")
+            if inp == "A":
+                print("A rule will be followed throughout")
+                self.flag = 0
+            elif inp == "B":
+                print("B rule will be followed throughout")
+                self.flag = 1
+            else:
+                print("You selected neither option, please select A or B")
+                self.flag = -1
+
+        print("Below is the Board. Happy Coding!")
         print(self)
 
     def empty_matrix(self):
