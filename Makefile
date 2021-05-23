@@ -7,5 +7,4 @@ console:
 	python3 test.py
 
 clean:
-	rm error.txt 
-	rm -r ./__pycache__
+	bash clean.sh 1> /dev/null 2> /dev/null
